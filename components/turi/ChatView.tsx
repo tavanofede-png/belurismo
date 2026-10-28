@@ -22,7 +22,6 @@ import remarkGfm from "remark-gfm";
 import { applyLocalAction, type Attachment } from "@/lib/turi/domain";
 import { api, type TuriController } from "./useTuri";
 import type { VoiceController } from "./useRealtime";
-import type { Tab } from "./TuriWorkspace";
 import TuriMark from "./TuriMark";
 import ConversationWidgets from "./ConversationWidgets";
 import TravelOptions from "./TravelOptions";
@@ -83,11 +82,9 @@ const fieldLabels: Record<string, string> = {
 export default function ChatView({
   turi,
   voice,
-  onTab,
 }: {
   turi: TuriController;
   voice: VoiceController;
-  onTab: (tab: Tab) => void;
 }) {
   const [text, setText] = useState(""),
     [files, setFiles] = useState<Attachment[]>([]),
@@ -577,10 +574,6 @@ export default function ChatView({
               ? "Ubicación compartida para esta conversación"
               : "Vos decidís. Turi te acompaña."}
           </span>
-          <button onClick={() => onTab("connections")}>
-            {turi.status?.ai ? "Ver conexiones" : "Conexiones pendientes"}
-            <ArrowUpRightIcon size={11} />
-          </button>
         </div>
       </div>
     </section>

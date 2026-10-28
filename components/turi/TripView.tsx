@@ -28,7 +28,6 @@ import {
 } from "@/lib/turi/domain";
 import { closeCurrentTrip } from "@/lib/turi/posttrip";
 import { api, type TuriController } from "./useTuri";
-import type { Tab } from "./TuriWorkspace";
 
 function Field({
   label,
@@ -59,11 +58,9 @@ const number = (form: FormData, key: string) => Number(form.get(key) || 0);
 export default function TripView({
   tab,
   turi,
-  onTab,
 }: {
   tab: "trip" | "budget" | "group";
   turi: TuriController;
-  onTab: (tab: Tab) => void;
 }) {
   const state = turi.state,
     summary = budgetSummary(state),
@@ -479,13 +476,6 @@ export default function TripView({
         <>
           <div className="turi-section-title">
             <h3>Tu itinerario</h3>
-            <button
-              className="turi-text-button"
-              onClick={() => onTab("connections")}
-            >
-              Revisar y pasar a Calendar
-              <ArrowRightIcon size={14} />
-            </button>
           </div>
           {!state.itinerary.length ? (
             <Empty>
@@ -1109,13 +1099,6 @@ export default function TripView({
               <button className="turi-primary wide">Agregar al grupo</button>
             </form>
           </details>
-          <button
-            className="turi-secondary turi-full-button"
-            onClick={() => onTab("connections")}
-          >
-            Preparar invitaciones por Gmail
-            <ArrowRightIcon size={16} />
-          </button>
           <div className="turi-section-title">
             <h3>Quién le debe a quién</h3>
             <ArrowDownRightIcon size={19} />

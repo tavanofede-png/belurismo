@@ -129,7 +129,7 @@ function Notice({ turi, onSend, disabled }: Props) {
       const consent = event.target.checked;
       setNow(new Date().toISOString());
       turi.setState(previous => ({ ...previous, alertsConsent: consent }));
-    }} /><span>Permitir avisos del viaje<small>Para recibirlos afuera de Turi también tenés que vincular y activar el canal en Conexiones.</small></span></label>
+    }} /><span>Permitir avisos del viaje<small>Para recibirlos afuera de Turi también necesitás un canal vinculado y activo.</small></span></label>
     <p className="turi-post-note">La pausa se conserva en esta sesión. Los avisos externos requieren consentimiento, un canal vinculado y el planificador configurado.</p>
     {status && <p className="turi-post-status" role="status">{status}</p>}
   </Surface>;

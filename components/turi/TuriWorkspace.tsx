@@ -5,7 +5,6 @@ import {
   CompassIcon,
   WalletIcon,
   UsersThreeIcon,
-  PlugsConnectedIcon,
   XIcon,
   ArrowUpRightIcon,
   ArrowRightIcon,
@@ -28,7 +27,6 @@ const navigation = [
   { id: "trip", label: "Mi viaje", icon: CompassIcon },
   { id: "budget", label: "Presupuesto", icon: WalletIcon },
   { id: "group", label: "Mi grupo", icon: UsersThreeIcon },
-  { id: "connections", label: "Conexiones", icon: PlugsConnectedIcon },
 ] as const;
 
 export default function TuriWorkspace({ onClose }: { onClose: () => void }) {
@@ -176,7 +174,7 @@ export default function TuriWorkspace({ onClose }: { onClose: () => void }) {
           )}
           <div className="turi-main-content">
             {tab === "chat" ? (
-              <ChatView turi={turi} voice={voice} onTab={setTab} />
+              <ChatView turi={turi} voice={voice} />
             ) : tab === "connections" ? (
               <ConnectionsView
                 turi={turi}
@@ -193,7 +191,7 @@ export default function TuriWorkspace({ onClose }: { onClose: () => void }) {
                 }}
               />
             ) : (
-              <TripView tab={tab} turi={turi} onTab={setTab} />
+              <TripView tab={tab} turi={turi} />
             )}
           </div>
         </div>
@@ -271,10 +269,7 @@ export default function TuriWorkspace({ onClose }: { onClose: () => void }) {
               <ArrowRightIcon size={16} />
             </button>
           </div>
-          <button
-            className="turi-storage-note"
-            onClick={() => setTab("connections")}
-          >
+          <div className="turi-storage-note">
             <span
               className={`turi-save-dot ${turi.status?.cloud ? "connected" : ""}`}
             />
@@ -283,7 +278,7 @@ export default function TuriWorkspace({ onClose }: { onClose: () => void }) {
                 ? "Sincronización segura habilitada"
                 : "Tu viaje se guarda en este dispositivo"}
             </span>
-          </button>
+          </div>
         </aside>
       </div>
     </dialog>
