@@ -5,6 +5,8 @@ import { AppError, required, safeEqual } from "./security";
 import { redis, loadAccount, mutateAccount, cloudConfigured, rateLimit } from "./storage";
 import { emptyWorkspace, money, type Attachment, type Message } from "./domain";
 import type { BeloTravelHotel } from "./belo-travel";
+import { buildConversationPanels } from "./conversation-panels";
+import { renderBeloCard, renderHotelCard, renderOptionCard, renderTripSummary, type BeloCardImage } from "./whatsapp-cards";
 import { openaiClient, runAgent, validateAttachments } from "./agent";
 import { mergeTravelOptions, optionToText, readTravelOptions, type TravelOption } from "./travel-options";
 
@@ -98,7 +100,8 @@ export async function sendWhatsapp(jid: string, text: string) {
     await evolution("message/sendText", { number, text: body.slice(index, index + 3800) });
 }
 
-type Photo = { url: string; caption: string };
+// A branded card rendered on demand; if rendering fails, the fallback (raw photo + caption, or text) is sent.
+type Card = { render: () => Promise<string>; caption: string; fallback: { url?: string; text: string } };
 type WidgetHotel = BeloTravelHotel & { url: string };
 export function hotelCaption(hotel: WidgetHotel) {
   return [
@@ -109,11 +112,19 @@ export function hotelCaption(hotel: WidgetHotel) {
     `Ver en belo travel: ${hotel.url}`,
   ].join("\n");
 }
-// One message per photo; a failed image falls back to its caption as text.
-async function sendPhotos(jid: string, photos: Photo[]) {
-  for (const photo of photos)
-    await evolution("message/sendMedia", { number: numberOf(jid), mediatype: "image", media: photo.url, caption: toWhatsappText(photo.caption) })
-      .catch(() => sendWhatsapp(jid, photo.caption));
+// One message per card, in order. Captions carry only what must stay tappable (links).
+async function sendCards(jid: string, cards: Card[]) {
+  for (const card of cards) {
+    try {
+      const media = await card.render();
+      await evolution("message/sendMedia", { number: numberOf(jid), mediatype: "image", mimetype: "image/png", fileName: "turi.png", media, caption: toWhatsappText(card.caption) });
+    } catch {
+      await (card.fallback.url
+        ? evolution("message/sendMedia", { number: numberOf(jid), mediatype: "image", media: card.fallback.url, caption: toWhatsappText(card.fallback.text) })
+        : Promise.reject()
+      ).catch(() => sendWhatsapp(jid, card.fallback.text));
+    }
+  }
 }
 
 function attachmentOf(media: NonNullable<Incoming["media"]>): Attachment {
@@ -155,26 +166,37 @@ async function processMessage(incoming: Incoming) {
   let answer = "",
     needsReview = false,
     options: TravelOption[] = [],
-    hotels: WidgetHotel[] = [];
+    hotels: WidgetHotel[] = [],
+    beloCards: BeloCardImage[] = [],
+    showSummary = false;
   await runAgent(
     { id, state: account.workspace || emptyWorkspace(), messages: history, attachments, channel: "whatsapp privado" },
     (event) => {
       if (event.type === "delta") answer += String(event.text);
       if (event.type === "travel_options") options = mergeTravelOptions(options, readTravelOptions(event.options));
       if (event.type === "proposal" || event.type === "belo_review") needsReview = true;
-      const widget = event.widget as { type?: string; hotels?: WidgetHotel[] } | undefined;
+      const widget = event.widget as { type?: string; kind?: string; hotels?: WidgetHotel[]; cards?: BeloCardImage[] } | undefined;
       if (event.type === "widget" && widget?.type === "belo-hotels") hotels = widget.hotels || [];
+      if (event.type === "widget" && widget?.type === "cards") beloCards = [...beloCards, ...(widget.cards || [])];
+      if (event.type === "widget" && widget?.type === "panel" && widget.kind === "summary") showSummary = true;
     },
   );
   if (needsReview) answer += "\n\nTe lo dejo como propuesta: por WhatsApp no se guardó ningún cambio ni se movió dinero.";
   if (!answer) answer = "No pude generar una respuesta. Intentá nuevamente.";
-  // ponytail: top 3 hotels as photos so the chat doesn't flood; the rest stay in belo travel.
-  const photos: Photo[] = [
-    ...hotels.filter((h) => h.image).slice(0, 3).map((h) => ({ url: h.image!, caption: hotelCaption(h) })),
-    ...options.filter((o) => o.image).map((o) => ({ url: o.image!.url, caption: optionToText(o) })),
+  // ponytail: top 3 hotels and 5 belo cards so the chat doesn't flood; the rest stay on the web.
+  const state = account.workspace || emptyWorkspace();
+  const cards: Card[] = [
+    ...hotels.slice(0, 3).map((h) => ({ render: () => renderHotelCard(h), caption: `Ver en belo travel: ${h.url}`,
+      fallback: { url: h.image ?? undefined, text: hotelCaption(h) } })),
+    ...options.map((o) => ({ render: () => renderOptionCard(o), caption: `Fuente: ${o.sourceUrl}`,
+      fallback: { url: o.image?.url, text: optionToText(o) } })),
+    ...beloCards.slice(0, 5).map((c) => ({ render: () => renderBeloCard(c), caption: "",
+      fallback: { text: `Tarjeta de ${c.holder}${c.lastFour ? ` terminada en ${c.lastFour}` : ""}: ${c.error || c.status}` } })),
+    ...(showSummary ? [{ render: () => renderTripSummary(buildConversationPanels(state).summary), caption: "",
+      fallback: { text: "No pude armar la imagen del resumen. Pedime el detalle por texto." } }] : []),
   ];
-  await sendWhatsapp(incoming.jid, [answer, ...options.filter((o) => !o.image).map(optionToText)].join("\n\n"));
-  await sendPhotos(incoming.jid, photos);
+  await sendWhatsapp(incoming.jid, answer);
+  await sendCards(incoming.jid, cards);
   const messages: Message[] = [
     ...history,
     { id: crypto.randomUUID(), role: "assistant" as const, text: answer, ...(options.length ? { options } : {}) },

@@ -86,6 +86,27 @@ export const beloTravelCatalog: Destination[] = [
     ],
   },
   {
+    name: "Río de Janeiro, Brasil",
+    match: /\br[ií]o de janeiro\b|\br[ií]o\b(?! grande| negro| cuarto| gallegos)|\bcarioca/i,
+    q: "Rio de Janeiro, Brazil",
+    placeId: "ChIJW6AIkVXemwARTtIvZ2xC3FA",
+    sorting: "Discount-desc",
+    checkedAt: "2026-10-28",
+    checkedDates: ["2026-10-28", "2026-10-29"],
+    hotels: [
+      { id: "10581", name: "Sheraton Grand Rio Hotel & Resort", address: "Avenida Niemeyer 121, Leblon, Río de Janeiro", stars: 5, ratingLabel: "Excelente", rating: 4.5, listPrice: 1078912, price: 517878, discount: 52, image: cdn("10581", "d705a8e3e35efee6f9cb2a39b3e8de4c25d7a85f.jpg") },
+      { id: "15491185", name: "Ritz Copacabana Hotel", address: "Rua Xavier da Silveira 13, Copacabana, Río de Janeiro", stars: 4, ratingLabel: "Muy bueno", rating: 4.4, listPrice: 516212, price: 252944, discount: 51, image: cdn("15491185", "4f8871c77c5c90eeb70fdc5229c5471bc529eb7b.jpg") },
+      { id: "13455131", name: "Radisson Barra Rio De Janeiro", address: "Av. Evandro Lins e Silva 600, Barra da Tijuca, Río de Janeiro", stars: 5, ratingLabel: "Muy bueno", rating: 4.4, listPrice: 417328, price: 208664, discount: 50, image: cdn("13455131", "5f7fd19ca1ae3a9d4951adab9ebeef649a8caaa1.jpg") },
+      { id: "14441", name: "PortoBay Rio de Janeiro", address: "Avenida Atlântica 1500, Copacabana, Río de Janeiro", stars: 4, ratingLabel: "Excelente", rating: 4.6, listPrice: 540047, price: 280825, discount: 48, image: cdn("14441", "23e781a68f5b09bc99b4d4c377aa978955c9589f.jpg") },
+      { id: "42275495", name: "Hotel Nacional Rio de Janeiro OFICIAL", address: "Av. Niemeyer 769, São Conrado, Río de Janeiro", stars: 5, ratingLabel: "Excelente", rating: 4.5, listPrice: 479694, price: 263832, discount: 45, image: cdn("42275495", "afbc2d762cb40e16ea0d4c2ad9ceba90a3b79a43.jpg") },
+      { id: "1327062", name: "Royal Rio Palace Hotel", address: "Rua Duvivier 82, Copacabana, Río de Janeiro", stars: 4, ratingLabel: "Muy bueno", rating: 4.1, listPrice: 238136, price: 130975, discount: 45, image: cdn("1327062", "d0e9004ae80d44624c2693fafe9d983207adc8bd.jpg") },
+      { id: "526870", name: "Américas Benidorm Hotel", address: "Rua Barata Ribeiro 547, Copacabana, Río de Janeiro", stars: 4, ratingLabel: "Muy bueno", rating: 4.3, listPrice: 255175, price: 148002, discount: 42, image: cdn("526870", "2ed4755c5c76dcad85036561e4802098a694b999.jpg") },
+      { id: "542137", name: "Hotel Arpoador", address: "Rua Francisco Otaviano 177, Arpoador, Río de Janeiro", stars: 4, ratingLabel: "Muy bueno", rating: 4.4, listPrice: 1250770, price: 762970, discount: 39, image: cdn("542137", "12151a1aaf5fc1bf15e40589f4bb145111c4e594.jpg") },
+      { id: "889673", name: "Orla Copacabana Hotel", address: "Avenida Atlântica 4122, Copacabana, Río de Janeiro", stars: 4, ratingLabel: "Excelente", rating: 4.6, listPrice: 319803, price: 195080, discount: 39, image: cdn("889673", "62ab1afdd6e1f5286af5cf794a24020558316e93.jpg") },
+      { id: "1363050", name: "Windsor Barra Hotel", address: "Avenida Lúcio Costa 2630, Barra da Tijuca, Río de Janeiro", stars: 5, ratingLabel: "Excelente", rating: 4.6, listPrice: 359915, price: 223147, discount: 38, image: cdn("1363050", "89a520897276bbc709b4a47e7efedfceccfe3871.jpg") },
+    ],
+  },
+  {
     name: "Santiago de Chile, Chile",
     // Plain "Santiago" means Chile here, never Santiago del Estero or de Compostela.
     match: /\bsantiago\b(?!\s+del?\s+(?:estero|compostela))/i,
