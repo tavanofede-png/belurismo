@@ -40,3 +40,11 @@
 }
 .belo-card.failed .belo-card-status { background: var(--turi-danger-soft); color: var(--turi-danger); box-shadow: inset 0 0 0 1px var(--turi-danger-soft); }
 .belo-card.failed .belo-card-number { font-family: inherit; font-size: 11px; letter-spacing: 0; line-height: 1.35; color: var(--turi-danger); }
+
+/* Congelada: frío, puntas de hielo desde los bordes y escarcha que cierra hacia el centro. */
+.belo-card-chill, .belo-card-frost, .belo-card-ice { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; }
+.belo-card-chill { background: linear-gradient(150deg, rgba(191, 230, 255, .55), rgba(127, 200, 255, .25) 55%, rgba(191, 230, 255, .45)); mix-blend-mode: screen; }
+.belo-card-frost { background: radial-gradient(ellipse at center, transparent 42%, rgba(230, 246, 255, .55) 78%, rgba(255, 255, 255, .85) 100%); }
+.belo-card-ice { width: 100%; height: 100%; overflow: visible; }
+.belo-card.frozen > :not(.belo-card-chill):not(.belo-card-frost):not(.belo-card-ice):not(.belo-card-status) { position: relative; z-index: 1; }
+.belo-card.frozen .belo-card-status { z-index: 2; background: #fff; color: #1f6fb2; box-shadow: inset 0 0 0 1px #a9dcff; }
