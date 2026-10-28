@@ -21,9 +21,12 @@ import {
   today,
   localTimeToIso,
   workspaceSchema,
+  tripStatuses,
+  tripStatusLabel,
   type Workspace,
   type Expense,
 } from "@/lib/turi/domain";
+import { closeCurrentTrip } from "@/lib/turi/posttrip";
 import { api, type TuriController } from "./useTuri";
 import type { Tab } from "./TuriWorkspace";
 
@@ -65,7 +68,8 @@ export default function TripView({
   const state = turi.state,
     summary = budgetSummary(state),
     [editing, setEditing] = useState(!state.trip.destination),
-    [notice, setNotice] = useState("");
+    [notice, setNotice] = useState(""),
+    [confirmClose, setConfirmClose] = useState(false);
   const [expenseCurrency, setExpenseCurrency] = useState(
       state.trip.destinationCurrency,
     ),
@@ -84,6 +88,19 @@ export default function TripView({
     turi.setState(next);
     setNotice("Guardado en tu viaje.");
   };
+  const setStatus = (status: (typeof tripStatuses)[number]) => {
+    try {
+      if (status === "closed") {
+        turi.setState(closeCurrentTrip(state));
+        setConfirmClose(false);
+        setEditing(true);
+        setNotice("Viaje cerrado. Quedó en tus viajes cerrados y arrancamos uno nuevo.");
+      } else update(applyLocalAction(state, { type: "trip", label: "Estado del viaje", data: { status } }));
+    } catch (e) {
+      turi.setError((e as Error).message);
+    }
+  };
+  const closedTrips = [...state.postTrip.archivedTrips].reverse();
   const saveTrip = (event: FormEvent<HTMLFormElement>) => {
     const form = formValues(event);
     try {
@@ -406,6 +423,23 @@ export default function TripView({
             </form>
           ) : (
             <div className="turi-trip-details">
+              <div className="turi-trip-status" role="group" aria-label="Estado del viaje">
+                {tripStatuses.filter((s) => s !== "closed").map((s) => (
+                  <button key={s} type="button" aria-pressed={state.trip.status === s}
+                    className={state.trip.status === s ? "active" : ""} onClick={() => setStatus(s)}>
+                    {tripStatusLabel[s]}
+                  </button>
+                ))}
+                {state.trip.destination && (confirmClose ? (
+                  <span className="turi-trip-close-confirm">
+                    ¿Cerrar {state.trip.destination}?
+                    <button type="button" className="danger" onClick={() => setStatus("closed")}>Sí, cerrar</button>
+                    <button type="button" onClick={() => setConfirmClose(false)}>No</button>
+                  </span>
+                ) : (
+                  <button type="button" className="turi-trip-close" onClick={() => setConfirmClose(true)}>Cerrar viaje</button>
+                ))}
+              </div>
               <strong>
                 {state.trip.destination || "Elegí tu próximo destino"}
               </strong>
@@ -420,6 +454,25 @@ export default function TripView({
               </p>
             </div>
           )}
+        </>
+      )}
+      {tab === "trip" && closedTrips.length > 0 && (
+        <>
+          <div className="turi-section-title">
+            <h3>Viajes cerrados</h3>
+          </div>
+          <ul className="turi-closed-trips">
+            {closedTrips.map(({ id, name, createdAt, snapshot }) => (
+              <li key={id}>
+                <strong>{name}</strong>
+                <span>
+                  {snapshot.trip.startDate || "Sin fecha"} → {snapshot.trip.endDate || "Sin fecha"} ·{" "}
+                  {money(snapshot.expenses.reduce((sum, e) => sum + e.homeAmount, 0), snapshot.trip.currency)} registrados
+                </span>
+                <small>{snapshot.trip.status === "closed" ? `Cerrado el ${createdAt.slice(0, 10)}` : `Archivado el ${createdAt.slice(0, 10)}`}</small>
+              </li>
+            ))}
+          </ul>
         </>
       )}
       {tab === "trip" && (

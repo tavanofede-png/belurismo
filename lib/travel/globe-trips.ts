@@ -102,7 +102,7 @@ function fromWorkspace(state: Pick<Workspace, "trip" | "expenses" | "itinerary">
   const trip = state.trip;
   return {
     id, source, destination: trip.destination, ...locateDestination(trip.destination),
-    status: tripStatus(trip.startDate, trip.endDate, trip.timeZone, now),
+    status: trip.status === "closed" ? "completed" : tripStatus(trip.startDate, trip.endDate, trip.timeZone, now),
     startDate: trip.startDate, endDate: trip.endDate, travelers: trip.travelers,
     currency: trip.currency, budget: trip.budget, reserve: trip.returnReserve,
     spent: state.expenses.reduce((total, expense) => total + expense.homeAmount, 0),

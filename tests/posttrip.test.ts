@@ -218,3 +218,21 @@ test("unbacked flight watches remain bounded interests with no claim of an activ
   assert.equal(restored.postTrip.flightWatches[0].maxPrice, 700);
   assert.equal("active" in restored.postTrip.flightWatches[0], false);
 });
+
+test("cerrar el viaje lo archiva como cerrado y arranca uno nuevo con el mismo grupo", async () => {
+  const { closeCurrentTrip, settleTripStatus } = await import("../lib/turi/posttrip");
+  const { emptyWorkspace, applyLocalAction } = await import("../lib/turi/domain");
+  const base = emptyWorkspace();
+  const state = { ...base, trip: { ...base.trip, destination: "Río", status: "in_progress" as const },
+    members: [{ id: "ana", name: "Ana", belotag: "", email: "", adultConfirmed: true, consentConfirmed: true }] };
+  const closed = closeCurrentTrip(state, { now: "2026-10-28T12:00:00.000Z" });
+  assert.equal(closed.trip.destination, "");
+  assert.equal(closed.trip.status, "planning");
+  assert.deepEqual(closed.members.map((m) => m.name), ["Ana"]);
+  assert.equal(closed.postTrip.archivedTrips.length, 1);
+  assert.equal(closed.postTrip.archivedTrips[0].snapshot.trip.status, "closed");
+  assert.throws(() => closeCurrentTrip(base), /destino/);
+  const viaProposal = settleTripStatus(applyLocalAction(state, { type: "trip", label: "Cerrar", data: { status: "closed" } }));
+  assert.equal(viaProposal.postTrip.archivedTrips[0].name, "Río");
+  assert.equal(settleTripStatus(state), state);
+});

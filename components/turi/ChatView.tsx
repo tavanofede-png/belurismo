@@ -26,7 +26,7 @@ import type { Tab } from "./TuriWorkspace";
 import TuriMark from "./TuriMark";
 import ConversationWidgets from "./ConversationWidgets";
 import TravelOptions from "./TravelOptions";
-import { postTripNoticeState, snoozePostTripNotice, dismissPostTripNotice } from "@/lib/turi/posttrip";
+import { postTripNoticeState, snoozePostTripNotice, dismissPostTripNotice, settleTripStatus } from "@/lib/turi/posttrip";
 import "./post-trip-finance.css";
 
 const suggestions = [
@@ -342,7 +342,7 @@ export default function ChatView({
                 onClick={() => {
                   try {
                     turi.setState((previous) =>
-                      applyLocalAction(previous, proposal),
+                      settleTripStatus(applyLocalAction(previous, proposal)),
                     );
                     turi.setProposals((previous) =>
                       previous.filter((_, i) => i !== index),

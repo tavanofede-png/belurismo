@@ -1116,6 +1116,62 @@ html:has(.turi-dialog[open]) {
   margin: 12px 0;
   background: var(--turi-surface-soft);
 }
+.turi-trip-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.turi-trip-status button {
+  padding: 6px 12px;
+  border: 1px solid var(--turi-line, #e4dcf5);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.turi-trip-status button.active {
+  background: var(--turi-violet);
+  border-color: var(--turi-violet);
+  color: #fff;
+}
+.turi-trip-status .turi-trip-close {
+  margin-left: auto;
+}
+.turi-trip-close-confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font-size: 0.85rem;
+}
+.turi-trip-close-confirm .danger {
+  background: #c62828;
+  border-color: #c62828;
+  color: #fff;
+}
+.turi-closed-trips {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 24px;
+  padding: 0;
+  list-style: none;
+}
+.turi-closed-trips li {
+  display: grid;
+  gap: 2px;
+  padding: 12px 14px;
+  border: 1px solid var(--turi-line, #e4dcf5);
+  border-radius: 12px;
+}
+.turi-closed-trips span,
+.turi-closed-trips small {
+  color: var(--turi-muted, #6b6380);
+  font-size: 0.85rem;
+}
 .turi-trip-details {
   padding: 17px 0;
   border-top: 1px solid var(--turi-line);

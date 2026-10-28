@@ -28,7 +28,14 @@ export const timeZoneSchema = z.string().max(80).refine((value) => {
     return false;
   }
 }, "Zona horaria no válida");
+export const tripStatuses = ["planning", "in_progress", "closed"] as const;
+export const tripStatusLabel: Record<(typeof tripStatuses)[number], string> = {
+  planning: "Planificando",
+  in_progress: "En viaje",
+  closed: "Cerrado",
+};
 export const tripSchema = z.object({
+  status: z.enum(tripStatuses).default("planning"),
   destination: z.string().max(120).default(""),
   startDate: z.union([z.literal(""), z.iso.date()]).default(""),
   endDate: z.union([z.literal(""), z.iso.date()]).default(""),
