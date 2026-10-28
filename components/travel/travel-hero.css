@@ -21,8 +21,6 @@
 }
 .travel-hero-layout { display: grid; grid-template-columns: 0.87fr 1.13fr; align-items: center; min-height: 560px; }
 .travel-hero-copy { position: relative; z-index: 1; padding: 0 0 20px; }
-.travel-brand-label { display: inline-flex; align-items: center; gap: 6px; color: var(--travel-purple); font-size: 17px; font-weight: 750; letter-spacing: -0.6px; margin-bottom: 24px; }
-.travel-brand-label > span { font-weight: 450; margin-left: -3px; }
 .travel-hero h1 { font-size: clamp(44px, 4.55vw, 62px); font-weight: 650; line-height: 1.07; letter-spacing: -3.6px; margin: 0; }
 .travel-hero h1 > span { color: var(--travel-purple); white-space: nowrap; }
 .travel-hero-copy > p { color: var(--travel-muted); font-size: 16px; font-weight: 450; letter-spacing: -0.4px; line-height: 1.65; max-width: 410px; margin: 24px 0 30px; text-wrap: pretty; }
@@ -35,9 +33,7 @@
 .travel-hero-passport strong { display: block; font-size: 12px; font-weight: 600; letter-spacing: -0.2px; }
 .travel-hero-passport div > span { display: block; color: var(--travel-muted); font-size: 11px; margin-top: 4px; }
 .travel-world { position: relative; min-width: 0; align-self: stretch; }
-.travel-world-topline { display: flex; align-items: center; justify-content: space-between; position: absolute; top: 28px; left: 4px; right: 4px; z-index: 2; gap: 12px; }
-.travel-world-topline > span { color: var(--travel-muted); font-size: 9px; letter-spacing: 1.9px; font-weight: 600; white-space: nowrap; }
-.travel-world-mark { color: var(--travel-purple); font-size: 16px; margin-right: 6px; }
+.travel-world-topline { display: flex; align-items: center; justify-content: flex-end; position: absolute; top: 28px; left: 4px; right: 4px; z-index: 2; }
 .travel-world-topline > button { text-align: right; font-size: 10px; color: var(--travel-muted); padding: 6px 0 6px 10px; }
 .travel-world-topline > button > span { display: flex; align-items: center; justify-content: end; gap: 4px; font-size: 9px; color: var(--travel-purple); margin-top: 3px; }
 .travel-world-topline > button:hover > span { text-decoration: underline; }
@@ -62,12 +58,6 @@
 .travel-globe-pin:hover .travel-pin-target, .travel-globe-pin:focus-visible .travel-pin-target, .travel-globe-pin.is-selected .travel-pin-target { border-color: #fffc; background: #ffffff1f; }
 .travel-globe-pin[data-vertical="above"] .travel-pin-name { transform: translateY(-33px); }
 .travel-globe-pin[data-vertical="above"]:is(:hover, :focus-visible) .travel-pin-name { transform: translateY(-35px); }
-.travel-globe-controls { position: absolute; bottom: 8px; left: 0; right: 32px; display: flex; align-items: center; justify-content: center; gap: 20px; }
-.travel-drag-hint { font-size: 10px; color: var(--travel-muted); }
-.travel-globe-controls > div { display: flex; align-items: center; background: #fff9; border: 1px solid #e9e1f0; padding: 3px; border-radius: 100px; box-shadow: 0 2px 7px #2b164d05; }
-.travel-globe-controls button { display: grid; place-items: center; height: 32px; width: 32px; border-radius: 50%; color: var(--travel-muted); transition: color 160ms, background 160ms; }
-.travel-globe-controls button:hover { background: var(--travel-soft); color: var(--travel-purple); }
-.travel-control-divider { width: 1px; height: 12px; margin: 0 4px; background: var(--travel-line); }
 .travel-globe-loading, .travel-globe-module-loading { position: relative; height: 560px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; color: var(--travel-muted); font-size: 12px; pointer-events: none; }
 .travel-globe-skeleton { display: block; width: min(75%, 370px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 32% 28%, #f7f5fb, #e6dcf5 70%, #d4c7eb); box-shadow: inset -18px -15px 40px #b8a1d326; }
 .travel-globe-fallback { position: absolute; inset: 130px 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: var(--travel-soft); border-radius: 50%; padding: 40px; }
@@ -168,6 +158,24 @@
 .travel-trip-footer > button { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; background: #6300dc; color: #fff; font-size: 12px; font-weight: 600; width: 100%; border-radius: 100px; transition: background 180ms; }
 .travel-trip-footer > button:hover { background: #4d00ad; }
 
+.travel-archive-panel .travel-trip-topline h2 { font-size: 20px; font-weight: 650; letter-spacing: -0.6px; color: #21152e; }
+.travel-archive-content { flex: 1; padding: 8px 26px 30px; }
+.travel-archive-content .travel-passport { margin: 0; padding: 0; border: 0; }
+.travel-archive-content .travel-passport-heading { flex-direction: column; align-items: flex-start; gap: 16px; }
+.travel-archive-content .travel-trip-filters { flex-wrap: wrap; }
+.travel-archive-content .travel-destination-list { display: grid; grid-template-columns: minmax(0, 1fr); }
+.travel-archive-content .travel-destination-arrow { display: block; flex-shrink: 0; }
+.travel-archive-content .travel-destination strong { overflow-wrap: anywhere; }
+.travel-archive-content .travel-passport-empty { align-items: flex-start; flex-wrap: wrap; padding: 22px; }
+.travel-archive-content .travel-passport-empty > div { flex: 1; min-width: 160px; }
+.travel-archive-content .travel-passport-empty > button { margin: 12px 0 0; }
+.travel-archive-content .travel-passport-footnote > span { flex-shrink: 1; display: block; }
+.travel-archive-footer { padding: 22px 26px; border-top: 1px solid #f0e9f6; display: flex; flex-direction: column; gap: 18px; }
+.travel-archive-footer > .travel-archive-examples { color: #766e7e; background: transparent; width: auto; align-self: flex-start; padding: 0; border-radius: 0; text-align: left; text-decoration: underline; text-underline-offset: 3px; }
+.travel-archive-footer > .travel-archive-examples:hover { color: #6300dc; background: transparent; }
+.travel-archive-plan { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 20px; background: #6300dc; color: #fff; font-size: 12px; font-weight: 600; border-radius: 100px; }
+.travel-archive-plan:hover { background: #4d00ad; }
+
 @media (prefers-reduced-motion: no-preference) {
   .travel-hero-copy { animation: travel-appear 700ms both; }
   .travel-trip-panel { animation: travel-panel-enter 280ms cubic-bezier(0.16,1,0.3,1); }
@@ -190,7 +198,6 @@
   .travel-hero { padding: 32px 22px 0; }
   .travel-hero-layout { grid-template-columns: minmax(0,1fr); min-height: auto; }
   .travel-hero-copy { padding: 0; }
-  .travel-brand-label { font-size: 15px; margin-bottom: 18px; }
   .travel-hero h1 { font-size: clamp(40px, 7.8vw, 57px); line-height: 1.08; letter-spacing: -2.4px; }
   .travel-hero-copy > p { max-width: 410px; font-size: 14px; line-height: 1.65; margin: 19px 0 24px; }
   .travel-primary-cta { font-size: 13px; min-height: 50px; padding-left: 21px; }
@@ -200,13 +207,10 @@
   .travel-world-topline { top: 4px; left: 0; right: 0; }
   .travel-globe-interactive, .travel-globe-module-loading, .travel-globe-loading { height: clamp(390px, 90vw, 540px); }
   .travel-globe-canvas, .travel-globe-pins { inset: 0 -15px; }
-  .travel-world-topline > span { font-size: 8px; letter-spacing: 1.3px; }
   .travel-world-topline > button { font-size: 9px; }
   .travel-pin-name { gap: 5px; font-size: 9px; padding: 5px 8px; }
   .travel-pin-detail { font-size: 8px; }
   .travel-globe-shadow { bottom: 43px; }
-  .travel-globe-controls { bottom: 0; gap: 12px; }
-  .travel-drag-hint { font-size: 9px; }
   .travel-passport { margin-top: 25px; padding-top: 20px; }
   .travel-passport-heading { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 17px; }
   .travel-trip-filters { width: 100%; gap: 4px; }
