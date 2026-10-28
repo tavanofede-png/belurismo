@@ -161,6 +161,24 @@ export function archiveCurrentTrip(state: Workspace, options: { name?: string; n
   const archive: ArchivedTrip = archivedTripSchema.parse({ id: crypto.randomUUID(), name: cleanText(options.name ?? (state.trip.destination || "Mi viaje"), 120), createdAt: instant(options.now), snapshot });
   return commit(state, { ...value, archivedTrips: [...value.archivedTrips, archive] });
 }
+/** Closing archives the trip as closed and starts a new one in planning.
+ * The group, consents, templates and earlier archives carry over. */
+export function closeCurrentTrip(state: Workspace, options: { now?: string } = {}): Workspace {
+  if (!state.trip.destination) throw new Error("Elegí un destino antes de cerrar el viaje.");
+  const archived = archiveCurrentTrip({ ...state, trip: { ...state.trip, status: "closed" } }, options);
+  const fresh = emptyWorkspace();
+  return workspaceSchema.parse({
+    ...fresh,
+    members: state.members,
+    alertsConsent: state.alertsConsent,
+    assistantPreferences: { ...fresh.assistantPreferences, anonymousPriceConsent: state.assistantPreferences.anonymousPriceConsent },
+    postTrip: { ...postTrip(archived), tripId: crypto.randomUUID(), remainder: null, notice: fresh.postTrip.notice },
+  });
+}
+/** A reviewed trip update that sets status closed goes through closeCurrentTrip. */
+export function settleTripStatus(state: Workspace): Workspace {
+  return state.trip.status === "closed" ? closeCurrentTrip(state) : state;
+}
 export function removeArchivedTrip(state: Workspace, id: string): Workspace {
   const value = postTrip(state);
   return commit(state, { ...value, archivedTrips: value.archivedTrips.filter((item) => item.id !== id) });

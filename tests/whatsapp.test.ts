@@ -38,3 +38,12 @@ test("isAllowed filters by phone when a list is set", () => {
   assert.equal(isAllowed("999@lid", "5491126883748"), false);
   assert.equal(isAllowed("5493810000000@s.whatsapp.net", ""), true);
 });
+
+test("hotelCaption arma la ficha del hotel para la foto", async () => {
+  const { hotelCaption } = await import("../lib/turi/whatsapp");
+  const caption = hotelCaption({ id: "1", name: "LK Design Hotel", address: "R. Bocaiúva 1755, Florianópolis", stars: 4,
+    ratingLabel: "Excelente", rating: 4.9, listPrice: 445623, price: 325305, discount: 27, image: "https://x/y.jpg", url: "https://travel.belo.app/hotel/1" });
+  assert.match(caption, /^\*LK Design Hotel\* ⭐⭐⭐⭐/);
+  assert.match(caption, /por noche \(antes .*-27%\)/);
+  assert.match(caption, /travel\.belo\.app\/hotel\/1$/);
+});

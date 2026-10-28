@@ -356,7 +356,7 @@ export function buildConversationPanels(state: Workspace, options: { date?: stri
 export function detectConversationPanel(text: string): ConversationPanelKind | undefined {
   const value = text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
   // Today's spending during the trip is answered by the agent with trip_summary,
-  // not by the post-trip panels ("saldo" alone means leftover money).
+  // not by the post-trip panels. "Saldo" alone is the belo balance, not money left from the trip.
   // Where to eat within budget is a search for real places, answered with option cards.
   if (/\b(?:comer|como|cenar|almorzar|restaurantes?|comida|bares?)\b/.test(value) && /\b(?:donde|recomend|entren?|opciones|lugares?)/.test(value)) return;
   if (/\bhoy\b|\bdel dia\b|\bdiari[oa]\b/.test(value) && /saldo|gast|presupuesto|queda|vengo|viene|voy/.test(value)) return;
@@ -366,7 +366,7 @@ export function detectConversationPanel(text: string): ConversationPanelKind | u
   if (/cobraron de mas|cobro(?:s)? (?:indebido|abusivo)|pague de mas|sobreprecio|me estaf|cobros para revisar/.test(value)) return "price-review";
   if (/dia por dia|en que dias|gastos por dia|gaste por dia|que aprend|\binsights?\b|me pase/.test(value)) return "daily";
   if (/notificacion(?:es)? (?:del |al |de |fin |final)|aviso (?:al |de |del )|recordatorio (?:del |de |al )/.test(value)) return "post-trip-notice";
-  if (/reales que (?:me )?sobr|remanente|reconvert|\bsaldo\b|(?:dolares|euros|pesos) que (?:me )?sobr/.test(value)) return "leftover";
+  if (/reales que (?:me )?sobr|remanente|reconvert|saldo (?:que (?:me )?(?:sobr|qued)|del viaje|restante)|(?:dolares|euros|pesos) que (?:me )?sobr/.test(value)) return "leftover";
   if (/mi opinion|dejar (?:una |mi )?(?:opinion|resena)|calificar|valorar (?:el |mi )?viaje|aporte anonimo/.test(value)) return "feedback";
   if (/proximo viaje|otro viaje|adonde (?:puedo ir |ir )?(?:la )?proxima|a donde (?:puedo ir |ir )?(?:la )?proxima/.test(value)) return "next-trip";
   if (/resumen|cuanto gaste|gastos|gastado|presupuesto/.test(value)) return "summary";

@@ -733,6 +733,24 @@ html:has(.turi-dialog[open]) {
   margin-top: 1px;
   --turi-mint: var(--turi-mint-bright);
 }
+/* Mientras Turi piensa: salto, giro de 360° y dos saltitos. */
+.turi-message-avatar.is-thinking {
+  animation: turi-think 2.2s cubic-bezier(0.45, 0, 0.3, 1) infinite;
+}
+@keyframes turi-think {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(0) rotate(360deg); }
+  10% { transform: translateY(-9px) rotate(0deg); }
+  20% { transform: translateY(0) rotate(0deg); }
+  48% { transform: translateY(0) rotate(360deg); }
+  58% { transform: translateY(-6px) rotate(360deg); }
+  66% { transform: translateY(0) rotate(360deg); }
+  76% { transform: translateY(-6px) rotate(360deg); }
+  84% { transform: translateY(0) rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .turi-message-avatar.is-thinking { animation: none; }
+}
 .turi-message-content {
   min-width: 0;
   overflow-wrap: anywhere;
@@ -1097,6 +1115,62 @@ html:has(.turi-dialog[open]) {
   border-radius: 16px;
   margin: 12px 0;
   background: var(--turi-surface-soft);
+}
+.turi-trip-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.turi-trip-status button {
+  padding: 6px 12px;
+  border: 1px solid var(--turi-line, #e4dcf5);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.turi-trip-status button.active {
+  background: var(--turi-violet);
+  border-color: var(--turi-violet);
+  color: #fff;
+}
+.turi-trip-status .turi-trip-close {
+  margin-left: auto;
+}
+.turi-trip-close-confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font-size: 0.85rem;
+}
+.turi-trip-close-confirm .danger {
+  background: #c62828;
+  border-color: #c62828;
+  color: #fff;
+}
+.turi-closed-trips {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 24px;
+  padding: 0;
+  list-style: none;
+}
+.turi-closed-trips li {
+  display: grid;
+  gap: 2px;
+  padding: 12px 14px;
+  border: 1px solid var(--turi-line, #e4dcf5);
+  border-radius: 12px;
+}
+.turi-closed-trips span,
+.turi-closed-trips small {
+  color: var(--turi-muted, #6b6380);
+  font-size: 0.85rem;
 }
 .turi-trip-details {
   padding: 17px 0;

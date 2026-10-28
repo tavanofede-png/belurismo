@@ -26,7 +26,7 @@ import type { Tab } from "./TuriWorkspace";
 import TuriMark from "./TuriMark";
 import ConversationWidgets from "./ConversationWidgets";
 import TravelOptions from "./TravelOptions";
-import { postTripNoticeState, snoozePostTripNotice, dismissPostTripNotice } from "@/lib/turi/posttrip";
+import { postTripNoticeState, snoozePostTripNotice, dismissPostTripNotice, settleTripStatus } from "@/lib/turi/posttrip";
 import "./post-trip-finance.css";
 
 const suggestions = [
@@ -242,13 +242,13 @@ export default function ChatView({
             role="log"
             aria-label="Mensajes de la conversación"
           >
-            {turi.messages.map((message) => (
+            {turi.messages.map((message, index) => (
               <article
                 key={message.id}
                 className={`turi-message ${message.role}${message.options?.length || message.widgets?.length ? " has-options" : ""}`}
               >
                 {message.role === "assistant" && (
-                  <span className="turi-message-avatar">
+                  <span className={`turi-message-avatar${turi.busy && index === turi.messages.length - 1 ? " is-thinking" : ""}`}>
                     <TuriMark size={19} />
                   </span>
                 )}
@@ -342,7 +342,7 @@ export default function ChatView({
                 onClick={() => {
                   try {
                     turi.setState((previous) =>
-                      applyLocalAction(previous, proposal),
+                      settleTripStatus(applyLocalAction(previous, proposal)),
                     );
                     turi.setProposals((previous) =>
                       previous.filter((_, i) => i !== index),

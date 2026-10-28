@@ -132,3 +132,20 @@ export async function createCards(holders: string[], limitUsd: string | null) {
   }
   return results;
 }
+
+const fold = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+// Finds cards by last four digits or by holder name (accent and case insensitive).
+export function matchCards<T extends { holder: string | null; lastFour: string | null }>(cards: T[], query: string) {
+  const q = fold(query);
+  if (/^\d{4}$/.test(q)) return cards.filter((card) => card.lastFour === q);
+  const exact = cards.filter((card) => fold(card.holder || "") === q);
+  return exact.length ? exact : cards.filter((card) => fold(card.holder || "").includes(q));
+}
+
+// Freezing is reversible and moves no money; the Idempotency-Key makes retries safe.
+export async function setCardFrozen(id: string, frozen: boolean) {
+  return beloApi<ApiCard>(`/cards/${encodeURIComponent(id)}/${frozen ? "freeze" : "unfreeze"}`, {
+    method: "POST",
+    headers: { "Idempotency-Key": crypto.randomUUID() },
+  });
+}

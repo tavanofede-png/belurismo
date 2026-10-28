@@ -193,3 +193,8 @@ test("panel intents follow the reference scenarios with accent-insensitive, prec
     assert.equal(detectConversationPanel(text), undefined, text);
   assert.equal(detectConversationPanel("Buscá hoteles frente al mar"), undefined);
 });
+
+test("saldo alone is the belo balance, not the leftover panel", () => {
+  for (const text of ["¿Cuál es mi saldo?", "quiero ver mi saldo en belo"]) assert.equal(detectConversationPanel(text), undefined, text);
+  assert.equal(detectConversationPanel("¿Qué hago con el saldo que me sobró?"), "leftover");
+});

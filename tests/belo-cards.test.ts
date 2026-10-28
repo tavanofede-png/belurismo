@@ -68,3 +68,32 @@ test("hoteles web sólo como respaldo: se descartan si el destino está en belo 
   assert.ok(findBeloTravelDestination("Florianópolis, Santa Catarina Hotel Majestic"));
   assert.equal(findBeloTravelDestination("Bariloche, Río Negro Llao Llao"), undefined);
 });
+
+test("matchCards busca por titular sin acentos ni mayúsculas, o por últimos 4", async () => {
+  const { matchCards } = await import("../lib/turi/belo-cards");
+  const cards = [
+    { holder: "kenny", lastFour: "2830" },
+    { holder: "Franco Perez", lastFour: "5349" },
+    { holder: "Franco Perez", lastFour: "5478" },
+    { holder: "Lucía Montero", lastFour: "1287" },
+  ];
+  assert.deepEqual(matchCards(cards, "Kenny").map((c) => c.lastFour), ["2830"]);
+  assert.deepEqual(matchCards(cards, "lucia").map((c) => c.lastFour), ["1287"]);
+  assert.deepEqual(matchCards(cards, "franco perez").map((c) => c.lastFour), ["5349", "5478"]);
+  assert.deepEqual(matchCards(cards, "5478").map((c) => c.holder), ["Franco Perez"]);
+  assert.deepEqual(matchCards(cards, "juan"), []);
+});
+
+test("congelar llama a freeze con Idempotency-Key y descongelar a unfreeze", async () => {
+  process.env.BELO_API_KEY = "belo_test_x";
+  const calls: string[] = [];
+  globalThis.fetch = (async (url: string, init: RequestInit) => {
+    calls.push(`${init.method} ${url.split("/api/v1")[1]} ${Boolean((init.headers as Record<string, string>)["Idempotency-Key"])}`);
+    const status = url.endsWith("/freeze") ? "frozen" : "active";
+    return new Response(JSON.stringify({ id: "316", name: "kenny", lastFour: "2830", brand: "visa", type: "virtual", status, canFreeze: true }), { status: 200 });
+  }) as typeof fetch;
+  const { setCardFrozen } = await import("../lib/turi/belo-cards");
+  assert.equal((await setCardFrozen("316", true)).status, "frozen");
+  assert.equal((await setCardFrozen("316", false)).status, "active");
+  assert.deepEqual(calls, ["POST /cards/316/freeze true", "POST /cards/316/unfreeze true"]);
+});
